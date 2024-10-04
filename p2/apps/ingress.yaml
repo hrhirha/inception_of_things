@@ -3,7 +3,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
-  namespace: default
 spec:
   ingressClassName: "traefik"
   rules:
@@ -27,8 +26,12 @@ spec:
             name: app-two
             port:
               number: 80
-  defaultBackend:
-    service:
-      name: app-three
-      port:
-        number: 80
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-three
+            port:
+              number: 80
