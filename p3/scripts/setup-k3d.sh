@@ -44,6 +44,3 @@ then
 else
 	echo "k3d is installed"
 fi
-
-# spawning k3s cluster (the name might change later)
-k3d cluster create mycluster

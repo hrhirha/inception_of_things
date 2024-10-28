@@ -5,13 +5,15 @@ normal=$(tput sgr0)
 
 if [[ $1 == "create" ]]
 then
+    k3d cluster create tbd-cluster
+
     kubectl create namespace argocd
     kubectl create namespace dev
 
     kubectl -n argocd apply -f \
             https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
     sleep 40
-    kubectl -n argocd apply -f ../config/argocd-application.yaml
+    kubectl -n argocd apply -f ../confs/argocd-application.yaml
     sleep 10
     kubectl -n argocd get secret argocd-initial-admin-secret \
             -o jsonpath="{.data.password}" | base64 -d > argo-pass.txt
