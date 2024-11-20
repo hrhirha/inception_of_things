@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./setup-k3d.sh
-./build-kubernetes.sh
+./setup-k8s-cluster.sh
