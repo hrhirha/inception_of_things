@@ -36,10 +36,15 @@ install_gitlab()
     --timeout 600s \
     --set global.edition=ce \
     --set global.hosts.domain=example.com \
-    --set global.hosts.externalIP=192.168.56.110 \
-    --set certmanager-issuer.email=me@example.com \
+    --set global.hosts.externalIP=0.0.0.0 \
+    --set certmanager.install=false \
+    --set global.ingress.configureCertmanager=false \
     --version 8.5.2 \
     --namespace gitlab
+
+    sleep 80s # check the kubectl wait thing
+    kubectl port-forward svc/gitlab-webservice-default -n gitlab 8080:8181 &
+    kubectl get secret gitlab-gitlab-initial-root-password  -n gitlab -o jsonpath="{.data.password}" | base64 --decode
 }
 
 main()
