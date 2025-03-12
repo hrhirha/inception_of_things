@@ -37,8 +37,10 @@ install_gitlab()
     --set global.edition=ce \
     --set global.hosts.domain=example.com \
     --set global.hosts.externalIP=0.0.0.0 \
-    --set certmanager.install=false \
+    --set gitlab-runner.install="false" \
+    --set certmanager.install="false" \
     --set global.ingress.configureCertmanager=false \
+    --set global.hosts.https="false" \
     --version 8.5.2 \
     --namespace gitlab
 
