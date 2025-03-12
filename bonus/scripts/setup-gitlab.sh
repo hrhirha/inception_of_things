@@ -45,7 +45,7 @@ install_gitlab()
     --namespace gitlab
 
     kubectl wait --for=condition=ready --timeout=300s pod -l app=webservice -n gitlab 
-    kubectl port-forward --address=0.0.0.0 svc/gitlab-webservice-default -n gitlab 8080:8181 &
+    kubectl port-forward --address=0.0.0.0 svc/gitlab-webservice-default -n gitlab 8585:8181 &
     kubectl get secret gitlab-gitlab-initial-root-password  -n gitlab -o jsonpath="{.data.password}" | base64 --decode > gitlab-pass.txt
 }
 
