@@ -15,11 +15,12 @@ create_resources() {
     echo "Installing ArgoCD..."
     kubectl -n argocd apply -f \
         https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    sleep 40 # Allow time for ArgoCD to initialize
+    kubectl wait --for=condition=ready --timeout=300s pod --all -n argocd # Allow time for ArgoCD to initialize
 
     echo "Applying custom ArgoCD configuration..."
     kubectl -n argocd apply -f ../confs/argocd-application.yaml
-    sleep 15
+    sleep 15 # Allow time for the application to initialize
+    kubectl wait --for=condition=ready --timeout=300s pod --all -n dev # Allow time for wil-playground to initialize
 
     echo "Retrieving ArgoCD admin password..."
     kubectl -n argocd get secret argocd-initial-admin-secret \
@@ -27,8 +28,8 @@ create_resources() {
     echo "Password saved to argo-pass.txt"
 
     echo "Starting port forwarding..."
-    kubectl port-forward svc/wil-playground-service -n dev 8888:80 &
-    kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+    kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:443 &
+    kubectl port-forward --address 0.0.0.0 svc/wil-playground-service -n dev 8888:80 &
 
     echo "Resources successfully created!"
 }
