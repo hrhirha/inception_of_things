@@ -7,29 +7,28 @@ NORMAL=$(tput sgr0)
 # Function to create resources
 create_resources() {
     echo "Creating Kubernetes cluster and namespaces..."
-    k3d cluster create tbd-cluster || { echo "Failed to create Kubernetes cluster"; exit 1; }
+    sudo k3d cluster create gitlab-cluster || { echo "Failed to create Kubernetes cluster"; exit 1; }
 
-    kubectl create namespace argocd
-    kubectl create namespace dev
+    sudo kubectl create namespace argocd
+    sudo kubectl create namespace dev
 
     echo "Installing ArgoCD..."
-    kubectl -n argocd apply -f \
+    sudo kubectl -n argocd apply -f \
         https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    kubectl wait --for=condition=ready --timeout=300s pod --all -n argocd # Allow time for ArgoCD to initialize
+    sudo kubectl wait --for=condition=ready --timeout=300s pod --all -n argocd # Allow time for ArgoCD to initialize
 
     echo "Applying custom ArgoCD configuration..."
-    kubectl -n argocd apply -f ../confs/argocd-application.yaml
-    sleep 15 # Allow time for the application to initialize
-    kubectl wait --for=condition=ready --timeout=300s pod --all -n dev # Allow time for wil-playground to initialize
+    sudo kubectl -n argocd apply -f ../confs/argocd-application.yaml
 
     echo "Retrieving ArgoCD admin password..."
-    kubectl -n argocd get secret argocd-initial-admin-secret \
+    sudo kubectl -n argocd get secret argocd-initial-admin-secret \
         -o jsonpath="{.data.password}" | base64 -d > argo-pass.txt
     echo "Password saved to argo-pass.txt"
 
     echo "Starting port forwarding..."
-    kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:443 &
-    kubectl port-forward --address 0.0.0.0 svc/wil-playground-service -n dev 8888:80 &
+    sudo kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
+    sleep 20 # Allow time for the application to initialize
+    sudo kubectl port-forward --address 0.0.0.0 svc/wil-playground-service -n dev 8282:80 &
 
     echo "Resources successfully created!"
 }
@@ -37,13 +36,13 @@ create_resources() {
 # Function to delete resources
 delete_resources() {
     echo "Deleting Kubernetes namespaces..."
-    kubectl delete namespace argocd
-    kubectl delete namespace dev
-    k3d cluster delete tbd-cluster
+    sudo kubectl delete namespace argocd
+    sudo kubectl delete namespace dev
+    sudo k3d cluster delete gitlab-cluster
 
     echo "Cleaning up temporary files and processes..."
     rm -f argo-pass.txt
-    pkill -f "kubectl port-forward" || echo "No port-forward processes to kill."
+    pkill -f "sudo kubectl port-forward" || echo "No port-forward processes to kill."
 
     echo "Resources successfully deleted!"
 }
