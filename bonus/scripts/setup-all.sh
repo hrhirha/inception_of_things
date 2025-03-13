@@ -2,7 +2,7 @@
 
 ./setup-k3d.sh
 
-echo "Creating Kubernetes cluster and namespaces..."
+echo "Creating Kubernetes cluster"
 sudo k3d cluster create gitlab-cluster || { echo "Failed to create Kubernetes cluster"; exit 1; }
 
 ./setup-gitlab.sh
