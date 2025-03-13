@@ -23,7 +23,7 @@ create_resources() {
     echo "Password saved to argo-pass.txt"
 
     echo "Starting port forwarding..."
-    sudo kubectl port-forward --request-timeout '0' -address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
+    sudo kubectl port-forward --request-timeout '0' --address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
     while sudo kubectl get pods -n dev 2>&1 | grep -q 'No resources found in dev namespace'; do
 	sleep 5
     done
