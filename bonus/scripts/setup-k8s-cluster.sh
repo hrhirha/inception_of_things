@@ -27,7 +27,10 @@ create_resources() {
 
     echo "Starting port forwarding..."
     sudo kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
-    sleep 20 # Allow time for the application to initialize
+    while sudo kubectl get pods -n dev | grep -q 'No resources found in dev namespace'; do
+	sleep 5
+    done
+    sudo kubectl wait --for=condition=ready --timeout=300s pod --all -n dev # Allow time for App to initialize
     sudo kubectl port-forward --address 0.0.0.0 svc/wil-playground-service -n dev 8282:80 &
 
     echo "Resources successfully created!"

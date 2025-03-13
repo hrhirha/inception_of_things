@@ -33,20 +33,15 @@ install_gitlab()
     sudo helm repo add gitlab https://charts.gitlab.io/
     sudo helm repo update
     sudo helm upgrade --install gitlab gitlab/gitlab \
-    --timeout 600s \
     --set global.edition=ce \
-    --set global.hosts.domain=example.com \
-    --set global.hosts.externalIP=0.0.0.0 \
-    --set gitlab-runner.install="false" \
-    --set certmanager.install="false" \
-    --set global.ingress.configureCertmanager=false \
-    --set global.hosts.https="false" \
-    --version 8.5.2 \
+    --set global.hosts.domain=localhost \
+    --set certmanager-issuer.email=me@localhost.com \
+    --timeout 600s \
     --namespace gitlab
 
     sudo kubectl wait --for=condition=ready --timeout=300s pod -l app=webservice -n gitlab 
-    sudo kubectl port-forward --address=0.0.0.0 svc/gitlab-webservice-default -n gitlab 8383:8181 &
     sudo kubectl get secret gitlab-gitlab-initial-root-password  -n gitlab -o jsonpath="{.data.password}" | base64 --decode > gitlab-pass.txt
+    sudo kubectl port-forward --address=0.0.0.0 svc/gitlab-nginx-ingress-controller -n gitlab 443:443
 }
 
 main()

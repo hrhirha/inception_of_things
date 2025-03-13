@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/S3sc0/wil-iot
+    repoURL: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/root/bonus.git
     path: k8s
     targetRevision: HEAD
   destination:
