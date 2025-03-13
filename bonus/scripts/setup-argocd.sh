@@ -22,15 +22,16 @@ create_resources() {
         -o jsonpath="{.data.password}" | base64 -d > argo-pass.txt
     echo "Password saved to argo-pass.txt"
 
-    echo "Starting port forwarding..."
-    sudo kubectl port-forward --request-timeout '0' --address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
     while sudo kubectl get pods -n dev 2>&1 | grep -q 'No resources found in dev namespace'; do
 	sleep 5
     done
     sudo kubectl wait --for=condition=ready --timeout=300s pod --all -n dev # Allow time for App to initialize
+
+    echo "Starting port forwarding..."
+    sudo kubectl port-forward --request-timeout '0' --address 0.0.0.0 svc/argocd-server -n argocd 8181:443 &
     sudo kubectl port-forward --request-timeout '0' --address 0.0.0.0 svc/wil-playground-service -n dev 8282:80 &
 
-    echo "Resources successfully created!"
+#    echo "Resources successfully created!"
 }
 
 # Function to delete resources
@@ -38,7 +39,6 @@ delete_resources() {
     echo "Deleting Kubernetes namespaces..."
     sudo kubectl delete namespace argocd
     sudo kubectl delete namespace dev
-    sudo k3d cluster delete gitlab-cluster
 
     echo "Cleaning up temporary files and processes..."
     rm -f argo-pass.txt
