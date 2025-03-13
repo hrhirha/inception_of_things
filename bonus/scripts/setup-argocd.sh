@@ -6,9 +6,6 @@ NORMAL=$(tput sgr0)
 
 # Function to create resources
 create_resources() {
-    echo "Creating Kubernetes cluster and namespaces..."
-    sudo k3d cluster create gitlab-cluster || { echo "Failed to create Kubernetes cluster"; exit 1; }
-
     sudo kubectl create namespace argocd
     sudo kubectl create namespace dev
 
