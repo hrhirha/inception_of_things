@@ -28,11 +28,11 @@ install_helm()
 
 install_gitlab()
 {
-    kubectl create namespace gitlab
+    sudo kubectl create namespace gitlab
 
-    helm repo add gitlab https://charts.gitlab.io/
-    helm repo update
-    helm upgrade --install gitlab gitlab/gitlab \
+    sudo helm repo add gitlab https://charts.gitlab.io/
+    sudo helm repo update
+    sudo helm upgrade --install gitlab gitlab/gitlab \
     --timeout 600s \
     --set global.edition=ce \
     --set global.hosts.domain=example.com \
@@ -44,9 +44,9 @@ install_gitlab()
     --version 8.5.2 \
     --namespace gitlab
 
-    kubectl wait --for=condition=ready --timeout=300s pod -l app=webservice -n gitlab 
-    kubectl port-forward --address=0.0.0.0 svc/gitlab-webservice-default -n gitlab 8383:8181 &
-    kubectl get secret gitlab-gitlab-initial-root-password  -n gitlab -o jsonpath="{.data.password}" | base64 --decode > gitlab-pass.txt
+    sudo kubectl wait --for=condition=ready --timeout=300s pod -l app=webservice -n gitlab 
+    sudo kubectl port-forward --address=0.0.0.0 svc/gitlab-webservice-default -n gitlab 8383:8181 &
+    sudo kubectl get secret gitlab-gitlab-initial-root-password  -n gitlab -o jsonpath="{.data.password}" | base64 --decode > gitlab-pass.txt
 }
 
 main()
