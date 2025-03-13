@@ -41,7 +41,7 @@ install_gitlab()
 
     sudo kubectl wait --for=condition=ready --timeout=300s pod -l app=webservice -n gitlab 
     sudo kubectl get secret gitlab-gitlab-initial-root-password  -n gitlab -o jsonpath="{.data.password}" | base64 --decode > gitlab-pass.txt
-    sudo kubectl port-forward --address=0.0.0.0 svc/gitlab-nginx-ingress-controller -n gitlab 443:443
+    sudo kubectl port-forward --request-timeout '0' --address=0.0.0.0 svc/gitlab-nginx-ingress-controller -n gitlab 443:443 &
 }
 
 main()
