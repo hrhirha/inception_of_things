@@ -45,10 +45,6 @@ install_docker() {
         sudo apt update
         sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || log_error "Failed to install Docker."
 
-        # Add user to the Docker group
-        sudo groupadd docker 2>/dev/null || true
-        sudo usermod -aG docker "$USER" || log_error "Failed to add user to Docker group."
-
         log_success "Docker installed successfully."
     else
         log_success "Docker is already installed."
