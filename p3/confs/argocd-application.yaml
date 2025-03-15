@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/S3sc0/wil-iot
+    repoURL: https://github.com/S3sc0/aamzouar
     path: k8s
     targetRevision: HEAD
   destination:
