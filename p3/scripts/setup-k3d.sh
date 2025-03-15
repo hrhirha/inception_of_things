@@ -48,7 +48,6 @@ install_docker() {
         # Add user to the Docker group
         sudo groupadd docker 2>/dev/null || true
         sudo usermod -aG docker "$USER" || log_error "Failed to add user to Docker group."
-        newgrp docker || log_error "Failed to activate Docker group."
 
         log_success "Docker installed successfully."
     else

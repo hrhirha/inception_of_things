@@ -7,28 +7,28 @@ NORMAL=$(tput sgr0)
 # Function to create resources
 create_resources() {
     echo "Creating Kubernetes cluster and namespaces..."
-    k3d cluster create tbd-cluster || { echo "Failed to create Kubernetes cluster"; exit 1; }
+    sudo k3d cluster create iot-cluster || { echo "Failed to create Kubernetes cluster"; exit 1; }
 
-    kubectl create namespace argocd
-    kubectl create namespace dev
+    sudo kubectl create namespace argocd
+    sudo kubectl create namespace dev
 
     echo "Installing ArgoCD..."
-    kubectl -n argocd apply -f \
+    sudo kubectl -n argocd apply -f \
         https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
     sleep 40 # Allow time for ArgoCD to initialize
 
     echo "Applying custom ArgoCD configuration..."
-    kubectl -n argocd apply -f ../confs/argocd-application.yaml
+    sudo kubectl -n argocd apply -f ../confs/argocd-application.yaml
     sleep 15
 
     echo "Retrieving ArgoCD admin password..."
-    kubectl -n argocd get secret argocd-initial-admin-secret \
+    sudo kubectl -n argocd get secret argocd-initial-admin-secret \
         -o jsonpath="{.data.password}" | base64 -d > argo-pass.txt
     echo "Password saved to argo-pass.txt"
 
     echo "Starting port forwarding..."
-    kubectl port-forward svc/wil-playground-service -n dev 8888:80 &
-    kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+    sudo kubectl port-forward svc/wil-playground-service -n dev 8888:80 &
+    sudo kubectl port-forward svc/argocd-server -n argocd 8080:443 &
 
     echo "Resources successfully created!"
 }
@@ -36,13 +36,13 @@ create_resources() {
 # Function to delete resources
 delete_resources() {
     echo "Deleting Kubernetes namespaces..."
-    kubectl delete namespace argocd
-    kubectl delete namespace dev
-    k3d cluster delete tbd-cluster
+    sudo kubectl delete namespace argocd
+    sudo kubectl delete namespace dev
+    sudo k3d cluster delete iot-cluster
 
     echo "Cleaning up temporary files and processes..."
     rm -f argo-pass.txt
-    pkill -f "kubectl port-forward" || echo "No port-forward processes to kill."
+    sudo pkill -f "sudo kubectl port-forward" || echo "No port-forward processes to kill."
 
     echo "Resources successfully deleted!"
 }
