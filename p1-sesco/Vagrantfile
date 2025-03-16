@@ -1,0 +1,42 @@
+# change the nodes' names
+# change the box to a latest version of a linux dist
+
+SER_NAME = "sescoS"
+AGE_NAME = "sescoSW"
+
+Vagrant.configure("2") do |config|
+  config.vm.define "server" do |server|
+    server.vm.box = "hashicorp/bionic64"
+    server.vm.hostname = SER_NAME
+    server.vm.network "private_network", ip: "192.168.56.110"
+    server.vm.provision "shell",
+      inline: "curl -sfL https://get.k3s.io | K3S_TOKEN=12345 INSTALL_K3S_EXEC='--node-ip 192.168.56.110' sh -"
+
+    server.vm.provider "virtualbox" do |vb|
+      vb.name = SER_NAME
+      vb.customize [
+        "modifyvm", :id,
+        "--cpus", "1",
+        "--memory", "1024",
+      ]
+    end
+  end
+
+  config.vm.define "agent" do |agent|
+    agent.vm.box = "hashicorp/bionic64"
+    agent.vm.hostname = AGE_NAME
+    agent.vm.network "private_network", ip: "192.168.56.111"
+    agent.vm.provision "shell",
+      inline: "curl -sfL https://get.k3s.io | K3S_URL='https://192.168.56.110:6443' K3S_TOKEN=12345 INSTALL_K3S_EXEC='--node-ip 192.168.56.111' sh -"
+
+    agent.vm.provider "virtualbox" do |vb|
+      vb.name = AGE_NAME
+      vb.customize [
+        "modifyvm", :id,
+        "--cpus", "1",
+        "--memory", "1024",
+      ]
+    end
+  end
+
+end
