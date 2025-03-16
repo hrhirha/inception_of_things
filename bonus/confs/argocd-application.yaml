@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wil-playground-argo-application
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://gitlab-webservice-default.gitlab.svc.cluster.local:8181/root/ayafdel.git
+    path: k8s
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
