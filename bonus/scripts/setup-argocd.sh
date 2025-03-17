@@ -32,6 +32,8 @@ create_resources() {
     sudo nohup kubectl port-forward --address 0.0.0.0 svc/wil-playground-service -n dev 8282:80 &
 
     echo "Resources successfully created!"
+    echo "ArgoCD http://localhost:8181"
+    echo  wil-app http://$(sudo kubectl get node -o wide | awk 'NR == 2 {print $6}')
 }
 
 # Function to delete resources

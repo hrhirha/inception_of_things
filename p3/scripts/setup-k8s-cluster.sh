@@ -25,16 +25,20 @@ create_resources() {
         -o jsonpath="{.data.password}" | base64 -d > argo-pass.txt
     echo "Password saved to argo-pass.txt"
 
+    sudo nohup kubectl port-forward svc/argocd-server -n argocd 8181:443 &
+    echo "Add Repository to Gitlab"
+    echo "GitLab https://gitlab.localhost"
     while sudo kubectl get pods -n dev 2>&1 | grep -q 'No resources found in dev namespace'; do
         sleep 5
     done
     sudo kubectl wait --for=condition=ready --timeout=300s pod --all -n dev # Allow time for App to initialize
 
     echo "Starting port forwarding..."
-    sudo nohup kubectl port-forward svc/argocd-server -n argocd 8181:443 &
     sudo nohup kubectl port-forward svc/wil-playground-service -n dev 8282:80 &
 
     echo "Resources successfully created!"
+    echo "ArgoCD http://localhost:8181"
+    echo  wil-app http://$(sudo kubectl get node -o wide | awk 'NR == 2 {print $6}')
 }
 
 # Function to delete resources
