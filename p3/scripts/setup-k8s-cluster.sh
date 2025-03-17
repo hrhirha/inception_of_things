@@ -15,7 +15,7 @@ create_resources() {
     echo "Installing ArgoCD..."
     sudo kubectl -n argocd apply -f \
         https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    sleep 40 # Allow time for ArgoCD to initialize
+    sudo kubectl wait --for=condition=ready --timeout=300s pod --all -n argocd # Allow time for ArgoCD to initialize
 
     echo "Applying custom ArgoCD configuration..."
     sudo kubectl -n argocd apply -f ../confs/argocd-application.yaml
