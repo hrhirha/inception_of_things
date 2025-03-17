@@ -29,9 +29,9 @@ create_resources() {
         sleep 5
     done
     sudo kubectl wait --for=condition=ready --timeout=300s pod --all -n dev # Allow time for App to initialize
-
+	
+    sudo kubectl apply -f ../confs/ingress.yaml
     echo "Starting port forwarding..."
-    sudo nohup kubectl port-forward svc/wil-playground-service -n dev 8282:80 &
     sudo nohup kubectl port-forward svc/argocd-server -n argocd 8181:443 &
 
     echo "Resources successfully created!"
